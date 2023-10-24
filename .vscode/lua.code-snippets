@@ -1,0 +1,123 @@
+{
+	"Class": {
+		"prefix": ["class"],
+		"body": [
+			"local ${0:$TM_FILENAME_BASE} = {}",
+			"${0:$TM_FILENAME_BASE}.__index = ${0:$TM_FILENAME_BASE}",
+			"",
+			"function ${0:$TM_FILENAME_BASE}.new()",
+			"\tlocal self = setmetatable({}, ${0:$TM_FILENAME_BASE})",
+			"\treturn self",
+			"end",
+			"",
+			"function ${0:$TM_FILENAME_BASE}:destroy()",
+			"\t",
+			"end",
+			"",
+			"return ${0:$TM_FILENAME_BASE}",
+			""
+		],
+		"description": "Lua Class"
+	},
+	"ServiceOrController": {
+		"prefix": ["service", "controller"],
+		"body": [
+		  "local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")",
+		  "",
+		  "local Loader = require(ReplicatedStorage.Shared.Loader)",
+		  "",
+		  "local $TM_FILENAME_BASE = {}",
+		  "$TM_FILENAME_BASE.className = \"$TM_FILENAME_BASE\"",
+		  "$TM_FILENAME_BASE.priority = 0",
+		  "",
+		  "function $TM_FILENAME_BASE:init() end",
+		  "",
+		  "function $TM_FILENAME_BASE:start() end",
+		  "",
+		  "return Loader:registerSingleton($TM_FILENAME_BASE)",
+		  ""
+		],
+		"description": "Service or Controller"
+	},
+	"ReactComponent": {
+		"prefix": ["reactcomponent"],
+		"body": [
+			"local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")",
+			"",
+			"local React = require(ReplicatedStorage.Packages.React)",
+			"",
+			"export type ${TM_FILENAME_BASE}Props = {}",
+			"",
+			"local ${TM_FILENAME_BASE}: React.FC<${TM_FILENAME_BASE}Props> = function(props: ${TM_FILENAME_BASE}Props)",
+			"\t$0",
+			"end",
+			"",
+			"return ${TM_FILENAME_BASE}",
+			""
+		],
+		"description": "React Component"
+	},
+	"Story": {
+		"prefix": ["story"],
+		"body": [
+			"local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")",
+			"",
+			"local React = require(ReplicatedStorage.Packages.React)",
+			"local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)",
+			"",
+			"return function(target)",
+			"\tlocal element = React.createElement($0)",
+			"",
+			"\tlocal root = ReactRoblox.createRoot(target)",
+			"\troot:render(element)",
+			"",
+			"\treturn function()",
+			"\t\troot:unmount()",
+			"\tend",
+			"end"
+		],
+		"description": "Story"
+	},
+	"ScreenStory": {
+		"prefix": ["screenstory"],
+		"body": [
+			"local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")",
+			"",
+			"local React = require(ReplicatedStorage.Packages.React)",
+			"local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)",
+			"local Container = require(ReplicatedStorage.React.Common.Container)",
+			"",
+			"return function(target)",
+			"\tlocal element = React.createElement(function()",
+			"\t\tlocal screen = React.createElement(\"Frame\", {",
+			"\t\t\tBackgroundTransparency = 1,",
+			"\t\t\tSize = UDim2.fromOffset(640, 360),",
+			"\t\t\tPosition = UDim2.fromOffset(0, 0),",
+			"\t\t\tLayoutOrder = 1,",
+			"\t\t}, {",
+			"\t\t\tStroke = React.createElement(\"UIStroke\", {",
+			"\t\t\t\tThickness = 2,",
+			"\t\t\t}),",
+			"",
+			"\t\t\tElement = React.createElement($0),",
+			"\t\t})",
+			"",
+			"\t\treturn screen",
+			"\tend)",
+			"",
+			"\tlocal root = ReactRoblox.createRoot(target)",
+			"\troot:render(element)",
+			"",
+			"\treturn function()",
+			"\t\troot:unmount()",
+			"\tend",
+			"end"
+		],
+		"description": "Story with screen",
+	},
+	"WrapReact": {
+		"prefix": ["wrapreact"],
+		"body": "React.createElement($0, {}, {\n\t${CLIPBOARD/\n/\n\t/g}\n})",
+		"description": "Wrap selected text in new React.createElement call"
+	}
+}

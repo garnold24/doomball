@@ -1,0 +1,42 @@
+{
+  "name": "doomball",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      },
+      "Client": {
+        "$path": "src/client"
+      },
+      "Packages": {
+        "$path": "Packages"
+      }
+    },
+
+    "ServerScriptService": {
+      "Game": {
+        "$path": "src/game.server.lua"
+      },
+      "Server": {
+        "$path": "src/server"
+      },
+      "ServerPackages": {
+        "$path": "ServerPackages"
+      }
+    },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Game": {
+          "$path": "src/game.client.lua"
+        }
+      }
+    },
+
+    "Workspace": {
+      "$path": "src/Assets/Workspace"
+    }
+  }
+}

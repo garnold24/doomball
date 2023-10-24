@@ -1,0 +1,45 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Rojo Build",
+			"type": "shell",
+			"windows": {
+				"command": ".\\build\\win\\build.bat"
+			},
+			"osx": {
+				"command": "./build/unix/build.sh"
+			},
+			"group": "build",
+			"presentation": {
+				"reveal": "always"
+			},
+			"detail": "Build the project file with Rojo"
+		},
+		{
+			"label": "Build and Publish",
+			"dependsOn": [
+				"Rojo Build"
+			],
+			"type": "shell",
+			"windows": {
+				"command": ".\\build\\win\\publish.bat"
+			},
+			"group": "build",
+			"presentation": {
+				"reveal": "always"
+			},
+			"detail": "Builds project, publishes, and then launches from Roblox."
+		},
+		{
+			"label": "Launch From Roblox",
+			"type": "shell",
+			"windows": {
+				"command": ".\\build\\win\\launch.bat"
+			},
+			"presentation": {
+				"reveal": "always"
+			}
+		},
+	]
+}

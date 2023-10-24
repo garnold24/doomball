@@ -1,0 +1,16 @@
+# Luau LSP sourcemap
+sourcemap.json
+
+# Wally Packages
+Packages
+ServerPackages
+
+# credentials/publishing
+*.secret
+
+# Roblox Studio place files
+/*.rbxlx
+/*.rbxl
+/*.rbxlx.lock
+/*.rbxl.lock
+roblox.yml
