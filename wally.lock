@@ -100,11 +100,16 @@ dependencies = []
 [[package]]
 name = "garnold24/doomball"
 version = "0.1.0"
-dependencies = [["Comm", "sleitnick/comm@0.3.1"], ["Flipper", "reselim/flipper@2.0.0"], ["Promise", "evaera/promise@4.0.0"], ["React", "core-packages/react@17.0.1-rc.19"], ["ReactRoblox", "core-packages/react-roblox@17.0.1-rc.19"], ["Sift", "csqrl/sift@0.0.6"], ["Signal", "sleitnick/signal@1.5.0"], ["Symbol", "sleitnick/symbol@2.0.1"], ["Trove", "sleitnick/trove@0.5.0"]]
+dependencies = [["Comm", "sleitnick/comm@0.3.1"], ["Flipper", "reselim/flipper@2.0.0"], ["Promise", "evaera/promise@4.0.0"], ["React", "core-packages/react@17.0.1-rc.19"], ["ReactRoblox", "core-packages/react-roblox@17.0.1-rc.19"], ["Sift", "csqrl/sift@0.0.6"], ["Signal", "sleitnick/signal@1.5.0"], ["Symbol", "sleitnick/symbol@2.0.1"], ["Trove", "sleitnick/trove@0.5.0"], ["Zone", "shadowengineer/zoneplus@0.1.1"]]
 
 [[package]]
 name = "reselim/flipper"
 version = "2.0.0"
+dependencies = []
+
+[[package]]
+name = "shadowengineer/zoneplus"
+version = "0.1.1"
 dependencies = []
 
 [[package]]
