@@ -27,6 +27,10 @@ function GameService:_initGame(players: { Players })
 	end)
 end
 
+function GameService:getActiveGame()
+	return self._activeGame
+end
+
 function GameService:requestGameStart(players: { Players })
 	if self._gameTrove then
 		warn("GameService.requestGameStart() | Cannot start a game as there's already one running.")

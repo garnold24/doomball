@@ -1,27 +1,38 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 
 local ComponentService = require(ReplicatedStorage.Shared.Services.ComponentService)
 local Trove = require(ReplicatedStorage.Packages.Trove)
 local BallSpawn = {}
 BallSpawn.__index = BallSpawn
 
+function BallSpawn:_spawnBall(location: CFrame)
+	self._trove = Trove.new()
+	local doomBall = self._trove:Add(Instance.new("Part"))
+	doomBall.Name = "DoomBall"
+	doomBall.Shape = Enum.PartType.Ball
+	doomBall.Size = Vector3.new(35, 35, 35)
+	doomBall.CFrame = location
+	doomBall.Parent = workspace
+
+	local decal = Instance.new("Decal", doomBall)
+	decal.Texture = "rbxassetid://131807492"
+
+	local componentInstance = ComponentService:tagObjectAs(doomBall, "Doomball")
+
+	return componentInstance, doomBall
+end
+
 function BallSpawn.new(instance: BasePart)
 	local self = setmetatable({
 		_instance = instance,
 	}, BallSpawn)
 
-	self._trove = Trove.new()
-	local doomBall = self._trove:Add(Instance.new("Part"))
-	doomBall.Name = "DoomBall"
-	doomBall.Shape = Enum.PartType.Ball
-	doomBall.Size = Vector3.new(20, 20, 20)
-	doomBall.CFrame = instance.CFrame
-	doomBall.Parent = workspace
+	local _ballCompInstance, ballModel = self:_spawnBall(instance.CFrame)
 
-	self._trove:Add(RunService.Heartbeat:Connect(function()
-		doomBall.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-	end))
+	-- upon removal of the spawner, remove the spawned ball
+	self._trove:Add(function()
+		ballModel:Destroy()
+	end)
 
 	return self
 end

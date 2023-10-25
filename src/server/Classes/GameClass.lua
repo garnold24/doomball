@@ -5,10 +5,14 @@ local Promise = require(ReplicatedStorage.Packages.Promise)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local Trove = require(ReplicatedStorage.Packages.Trove)
 
+export type GameState = "Loading" | "Starting" | "InProgress" | "Ending"
+
+local STARTING_PERIOD = 10
 local ARENA = ReplicatedStorage.AssetStorage.Arenas.Arena1
 
 local GameClass = {
 	_loaded = false,
+	_gameState = "Loading",
 }
 GameClass.__index = GameClass
 
@@ -30,7 +34,7 @@ local function getSpawns(arena: Model, amt: number): { CFrame }?
 	return spawns
 end
 
-function GameClass:_loadGame()
+function GameClass:_loadGameAsync(): boolean
 	-- load map, spawn gameplay components
 	-- map has it's own tagged components so they'll initialize upon parenting to workspace
 	local newArena = self._trove:Clone(ARENA)
@@ -38,7 +42,7 @@ function GameClass:_loadGame()
 
 	-- load players
 	local spawns = getSpawns(newArena, #self._players)
-	if not spawns then return end
+	if not spawns then return false end
 
 	-- respawn all characters and wait for them to load
 	Promise.all(Sift.Array.map(self._players, function(player: Player)
@@ -52,7 +56,14 @@ function GameClass:_loadGame()
 	for i, player in self._players do
 		local spawn = spawns[i]
 		if not spawn then spawn = spawns[1] end
-		player.Character:PivotTo(spawn)
+		local char = player.Character
+		char:PivotTo(spawn)
+
+		-- remove players from game once they die
+		self._trove:Add(char.Humanoid.Died:Connect(function()
+			local index = table.find(self._players, player)
+			table.remove(self._players, index)
+		end))
 	end
 
 	-- clean up characters after end of match
@@ -61,9 +72,26 @@ function GameClass:_loadGame()
 			player:LoadCharacter()
 		end
 	end)
+
+	-- game loaded successfully
+	return true
+end
+
+function GameClass:getGameState(): GameState
+	return self._gameState
+end
+
+function GameClass:getPlayers(): { Players }
+	return Sift.Array.copy(self._players)
 end
 
 function GameClass:step(): boolean
+	if #self._players == 0 then
+		print("everyone died")
+		self._gameState = "Ending"
+		return true
+	end
+	if self._gameState == "Ending" then return true end
 	return false
 end
 
@@ -72,11 +100,27 @@ function GameClass.new(initialPlayers: { Players })
 
 	self._trove = Trove.new()
 	self._players = Sift.Array.copy(initialPlayers)
+	self._gameState = "Loading"
 
-	self._trove:AddPromise(Promise.new(function(resolve, _reject)
-		self:_loadGame()
-		resolve()
-	end))
+	self._trove
+		:AddPromise(Promise.new(function(resolve, _reject)
+			resolve(self:_loadGameAsync())
+		end))
+		:andThen(function(didLoad)
+			if not didLoad then
+				warn("Game did not load, look into spawns.")
+				self._gameState = "Ending"
+				return
+			end
+
+			-- start the game
+			print("Game Loaded")
+			self._gameState = "Starting"
+			return Promise.delay(STARTING_PERIOD):andThen(function()
+				print("Game started")
+				self._gameState = "InProgress"
+			end)
+		end)
 
 	self._trove:Add(Players.PlayerRemoving:Connect(function(player: Player)
 		local playerIndex = table.find(self._players, player)
