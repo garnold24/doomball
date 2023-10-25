@@ -5,9 +5,11 @@ local Promise = require(ReplicatedStorage.Packages.Promise)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local Trove = require(ReplicatedStorage.Packages.Trove)
 
-export type GameState = "Loading" | "Starting" | "InProgress" | "Ending"
+export type GameState = "Loading" | "Starting" | "InProgress" | "Ending" | "Ended"
 
 local STARTING_PERIOD = 10
+local ENDING_PERIOD = 5
+
 local ARENA = ReplicatedStorage.AssetStorage.Arenas.Arena1
 
 local GameClass = {
@@ -86,12 +88,18 @@ function GameClass:getPlayers(): { Players }
 end
 
 function GameClass:step(): boolean
+	if self._gameState == "Ended" then return true end
+	if self._gameState == "Ending" then return false end
+
 	if #self._players == 0 then
-		print("everyone died")
+		print("everyone died game is ending in 5 seconds")
 		self._gameState = "Ending"
-		return true
+		Promise.delay(ENDING_PERIOD):andThen(function()
+			self._gameState = "Ended"
+		end)
+		return false
 	end
-	if self._gameState == "Ending" then return true end
+
 	return false
 end
 
