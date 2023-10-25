@@ -11,11 +11,13 @@ function BallSpawn:_spawnBall(location: CFrame)
 	doomBall.Name = "DoomBall"
 	doomBall.Shape = Enum.PartType.Ball
 	doomBall.Size = Vector3.new(35, 35, 35)
+	doomBall.TopSurface = Enum.SurfaceType.Smooth
+	doomBall.BottomSurface = Enum.SurfaceType.Smooth
+
 	doomBall.CFrame = location
 	doomBall.Parent = workspace
-
 	local decal = Instance.new("Decal", doomBall)
-	decal.Texture = "rbxassetid://131807492"
+	decal.Texture = "rbxassetid://15169809150"
 
 	local componentInstance = ComponentService:tagObjectAs(doomBall, "Doomball")
 
