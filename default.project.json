@@ -39,6 +39,7 @@
     },
 
     "Workspace": {
+      "$ignoreUnknownInstances": true,
       "$path": "src/Assets/Workspace"
     }
   }

@@ -27,9 +27,9 @@ function GameService:_initGame(players: { Players })
 	end)
 end
 
-function GameService:RequestGameStart(players: { Players })
+function GameService:requestGameStart(players: { Players })
 	if self._gameTrove then
-		warn("GameService.RequestGameStart() | Cannot start a game as there's already one running.")
+		warn("GameService.requestGameStart() | Cannot start a game as there's already one running.")
 		return
 	end
 	self:_initGame(players)
@@ -44,7 +44,7 @@ function GameService:start()
 	game:GetService("RunService").Heartbeat:Connect(function(_delta)
 		-- if there's a game running, then step it
 		if not self._activeGame then return end
-		local complete = self._activeGame:Step()
+		local complete = self._activeGame:step()
 
 		-- if game has completed, then end it
 		if not complete then return end
