@@ -7,7 +7,9 @@ local Trove = require(ReplicatedStorage.Packages.Trove)
 
 export type GameState = "Loading" | "Starting" | "InProgress" | "Ending" | "Ended"
 
+local PLAYER_WALKSPEED = 32
 local STARTING_PERIOD = 10
+local GAMEPLAY_PERIOD = 60
 local ENDING_PERIOD = 5
 
 local ARENA = ReplicatedStorage.AssetStorage.Arenas.Arena1
@@ -60,9 +62,11 @@ function GameClass:_loadGameAsync(): boolean
 		if not spawn then spawn = spawns[1] end
 		local char = player.Character
 		char:PivotTo(spawn)
+		char.Humanoid.WalkSpeed = PLAYER_WALKSPEED
 
 		-- remove players from game once they die
 		self._trove:Add(char.Humanoid.Died:Connect(function()
+			if self._gameState ~= "InProgress" then return end
 			local index = table.find(self._players, player)
 			table.remove(self._players, index)
 		end))
@@ -121,13 +125,21 @@ function GameClass.new(initialPlayers: { Players })
 				return
 			end
 
-			-- start the game
+			-- start the game loop
 			print("Game Loaded")
 			self._gameState = "Starting"
-			return Promise.delay(STARTING_PERIOD):andThen(function()
-				print("Game started")
-				self._gameState = "InProgress"
-			end)
+			return Promise.delay(STARTING_PERIOD)
+				:andThen(function()
+					print("Game started")
+					self._gameState = "InProgress"
+				end)
+				:andThen(function()
+					-- end the game after the gameplay period
+					return Promise.delay(GAMEPLAY_PERIOD):andThen(function()
+						print("Game ended, time is up")
+						self._gameState = "Ending"
+					end)
+				end)
 		end)
 
 	self._trove:Add(Players.PlayerRemoving:Connect(function(player: Player)

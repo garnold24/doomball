@@ -10,7 +10,7 @@ local Trove = require(ReplicatedStorage.Packages.Trove)
 
 local IMPULSE_TIME_STEP = 1
 local IMPULSE_PERIOD = 2
-local IMPULSE_DELTA_V = 150
+local IMPULSE_DELTA_V = 100
 
 local BALL_DAMAGE = 60
 local HIT_RATE = 1
@@ -68,19 +68,17 @@ function Doomball:_impulse(player: Player)
 		doomBall:ApplyImpulse(impulseForce * deltaTime)
 	end
 
-	return self._trove
-		:AddPromise(Promise.new(function(resolve, _reject)
-			-- apply impulse over the course of the step period
-			local stepConnection = self._trove:Add(RunService.Stepped:Connect(function(_gameTime: number, deltaTime: number)
-				impulseTowardsPlayer(deltaTime)
-			end))
-			Promise.delay(IMPULSE_PERIOD):andThen(function()
-				resolve(stepConnection)
-			end)
+	-- apply impulse over the course of the impulse period
+	return self._trove:AddPromise(Promise.new(function(resolve, _reject)
+		local stepConnection = self._trove:Add(RunService.Stepped:Connect(function(_gameTime: number, deltaTime: number)
+			impulseTowardsPlayer(deltaTime)
 		end))
-		:andThen(function(connection)
-			connection:Disconnect()
+		Promise.delay(IMPULSE_PERIOD):andThen(function()
+			resolve(stepConnection)
 		end)
+	end):andThen(function(connection)
+		connection:Disconnect()
+	end))
 end
 
 function Doomball:_step()
@@ -91,19 +89,18 @@ function Doomball:_step()
 	if gameState ~= "InProgress" then return end
 
 	if not self:_shouldImpulse() then return end
-	print("should impulse")
+
 	local players = activeGame:getPlayers()
 	if #players == 0 then return end
 
 	-- move towards the nearest player
 	local nearestPlayer = players[1]
 	local nearestDistance = math.huge
-	for _, player in ipairs(players) do
+	for _, player in players do
 		local distance = (player.Character.HumanoidRootPart.Position - self._instance.Position).Magnitude
-		if distance < nearestDistance then
-			nearestPlayer = player
-			nearestDistance = distance
-		end
+		if distance > nearestDistance then continue end
+		nearestPlayer = player
+		nearestDistance = distance
 	end
 
 	self._impulsing = true
