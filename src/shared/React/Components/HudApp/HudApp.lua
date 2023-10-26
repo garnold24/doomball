@@ -28,13 +28,18 @@ local HudApp: React.FC<HudAppProps> = function(props: HudAppProps)
 				VerticalAlignment = Enum.VerticalAlignment.Top,
 			}),
 			GameState = active and React.createElement(GameState, {
+				size = UDim2.new(0, 128, 0, 64),
 				state = gameState,
+				layoutOrder = 1,
 			}),
 			Timer = (active and gameState == "InProgress") and React.createElement(Timer, {
+				size = UDim2.new(0, 128, 0, 64),
 				expireTime = timer,
+				layoutOrder = 2,
 			}),
 			PlayerList = active and React.createElement(PlayerList, {
-				players = players,
+				playerIds = players,
+				layoutOrder = 3,
 			}),
 		}),
 

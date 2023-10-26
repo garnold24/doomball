@@ -9,6 +9,7 @@ export type TimerProps = {
 	size: UDim2?,
 
 	expireTime: number,
+	layoutOrder: number?,
 }
 
 local function formatTimer(time: number): string
@@ -28,6 +29,7 @@ local Timer: React.FC<TimerProps> = function(props: TimerProps)
 		AnchorPoint = props.anchorPoint,
 		Size = props.size,
 		Position = props.position,
+		LayoutOrder = props.layoutOrder,
 
 		BackgroundTransparency = 1,
 		Font = Enum.Font.Code,

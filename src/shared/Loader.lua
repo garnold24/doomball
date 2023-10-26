@@ -1,5 +1,6 @@
 local Loader = {
 	modules = {},
+	singletons = {},
 }
 
 -- constants
@@ -57,6 +58,7 @@ function Loader:load(): ()
 	for _, module in modules do
 		if not module[SINGLETON_TOKEN] then continue end
 		module:init()
+		self.singletons[module.className] = module
 	end
 	for _, module in modules do
 		if not module[SINGLETON_TOKEN] then continue end
@@ -64,6 +66,11 @@ function Loader:load(): ()
 			module:start()
 		end)
 	end
+end
+
+function Loader:getService(className: string)
+	assert(self.singletons[className], `{className} is not a registered singleton`)
+	return self.singletons[className]
 end
 
 return Loader

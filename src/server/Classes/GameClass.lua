@@ -1,6 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
+local Loader = require(ReplicatedStorage.Shared.Loader)
 local Promise = require(ReplicatedStorage.Packages.Promise)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local Trove = require(ReplicatedStorage.Packages.Trove)
@@ -70,6 +72,14 @@ function GameClass:_loadGameAsync(): boolean
 			if self._gameState ~= "InProgress" then return end
 			local index = table.find(self._players, player)
 			table.remove(self._players, index)
+
+			local GameService = Loader:getService("GameService")
+			GameService:setGameState(
+				"Players",
+				Sift.Array.map(self._players, function(player: Player)
+					return player.UserId
+				end)
+			)
 		end))
 	end
 
@@ -93,6 +103,9 @@ function GameClass:getPlayers(): { Players }
 end
 
 function GameClass:step(): boolean
+	local GameService = Loader:getService("GameService")
+	GameService:setGameState("GameState", self._gameState)
+
 	if self._gameState == "Ended" then return true end
 	if self._gameState == "Ending" then return false end
 
@@ -101,7 +114,7 @@ function GameClass:step(): boolean
 		if #self._players == 0 then
 			print("game has ended due to lack of players")
 			resolve(true)
-		elseif tick() >= self._endTime then
+		elseif os.time() >= self._endTime then
 			print("game has ended due to time")
 			resolve(true)
 		else
@@ -122,8 +135,19 @@ function GameClass.new(initialPlayers: { Players })
 	local self = setmetatable({}, GameClass)
 
 	self._trove = Trove.new()
+
+	-- set players and replicate
 	self._players = Sift.Array.copy(initialPlayers)
+	local GameService = Loader:getService("GameService")
+	GameService:setGameState(
+		"Players",
+		Sift.Array.map(self._players, function(player: Player)
+			return player.UserId
+		end)
+	)
+
 	self._gameState = "Loading"
+	GameService:setGameState("GameState", self._gameState)
 
 	self._trove
 		:AddPromise(Promise.new(function(resolve, _reject)
@@ -139,9 +163,13 @@ function GameClass.new(initialPlayers: { Players })
 			-- start the game loop
 			print("Game Loaded")
 			self._gameState = "Starting"
+			GameService:setGameState("Timer", os.time() + STARTING_PERIOD)
+
 			return Promise.delay(STARTING_PERIOD):andThen(function()
 				print("Game started")
-				self._endTime = tick() + GAMEPLAY_PERIOD
+				self._endTime = os.time() + GAMEPLAY_PERIOD
+				GameService:setGameState("Timer", self._endTime)
+
 				self._gameState = "InProgress"
 			end)
 		end)

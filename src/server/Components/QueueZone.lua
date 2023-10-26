@@ -28,10 +28,7 @@ function QueueZone.new(instance: Instance)
 		self._zone.playerEntered:Connect(function(player)
 			self._players[player] = true
 			self._playersInZone += 1
-			if self._playersInZone == NEEDED_PLAYERS then
-				print("starting in 10 seconds")
-				self._startTime = tick() + WAIT_TIME
-			end
+			if self._playersInZone == NEEDED_PLAYERS then self._startTime = tick() + WAIT_TIME end
 		end),
 		"Disconnect"
 	)
@@ -40,10 +37,7 @@ function QueueZone.new(instance: Instance)
 		self._zone.playerExited:Connect(function(player)
 			self._players[player] = false
 			self._playersInZone -= 1
-			if self._playersInZone < NEEDED_PLAYERS then
-				print("not enough players, cancelling")
-				self._startTime = -1
-			end
+			if self._playersInZone < NEEDED_PLAYERS then self._startTime = -1 end
 		end),
 		"Disconnect"
 	)

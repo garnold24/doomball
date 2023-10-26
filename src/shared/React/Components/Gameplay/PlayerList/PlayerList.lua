@@ -6,7 +6,7 @@ local React = require(ReplicatedStorage.Packages.React)
 export type PlayerListProps = {
 	pixelHeight: number?,
 	position: UDim2?,
-
+	layoutOrder: number?,
 	playerIds: { number },
 }
 
@@ -35,6 +35,7 @@ local PlayerList: React.FC<PlayerListProps> = function(props: PlayerListProps)
 		BackgroundTransparency = 1,
 		Position = props.position,
 		Size = UDim2.new(0.5, 0, 0, props.pixelHeight or 48),
+		LayoutOrder = props.layoutOrder,
 	}, children)
 end
 

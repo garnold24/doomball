@@ -6,6 +6,7 @@ export type GameStateProps = {
 	anchorPoint: Vector2?,
 	position: UDim2?,
 	size: UDim2?,
+	layoutOrder: number?,
 
 	state: string,
 }
@@ -15,6 +16,7 @@ local GameState: React.FC<GameStateProps> = function(props: GameStateProps)
 		AnchorPoint = props.anchorPoint,
 		Size = props.size,
 		Position = props.position,
+		LayoutOrder = props.layoutOrder,
 
 		BackgroundTransparency = 1,
 		Font = Enum.Font.Bangers,
