@@ -26,9 +26,10 @@ local HudApp: React.FC<HudAppProps> = function(props: HudAppProps)
 				HorizontalAlignment = Enum.HorizontalAlignment.Center,
 				SortOrder = Enum.SortOrder.LayoutOrder,
 				VerticalAlignment = Enum.VerticalAlignment.Top,
+				Padding = UDim.new(0, 8),
 			}),
 			GameState = active and React.createElement(GameState, {
-				size = UDim2.new(0, 128, 0, 64),
+				size = UDim2.new(0, 64 * 4, 0, 64),
 				state = gameState,
 				layoutOrder = 1,
 			}),

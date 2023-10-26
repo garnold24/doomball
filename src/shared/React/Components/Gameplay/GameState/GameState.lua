@@ -11,6 +11,14 @@ export type GameStateProps = {
 	state: string,
 }
 
+local GAME_STATE_STRINGS = {
+	Loading = "Arena Loading",
+	Starting = "Round Starting",
+	InProgress = "Avoid the Doom Ball",
+	Ending = "Round Ending",
+	Ended = "Round Ended",
+}
+
 local GameState: React.FC<GameStateProps> = function(props: GameStateProps)
 	return React.createElement("TextLabel", {
 		AnchorPoint = props.anchorPoint,
@@ -22,7 +30,7 @@ local GameState: React.FC<GameStateProps> = function(props: GameStateProps)
 		Font = Enum.Font.Bangers,
 		TextColor3 = Color3.fromRGB(255, 255, 255),
 		TextScaled = true,
-		Text = props.state or "...",
+		Text = GAME_STATE_STRINGS[props.state] or "...",
 	}, {
 		Stroke = React.createElement("UIStroke", {
 			Thickness = 2,
