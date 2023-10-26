@@ -15,6 +15,7 @@ local ENDING_PERIOD = 5
 local ARENA = ReplicatedStorage.AssetStorage.Arenas.Arena1
 
 local GameClass = {
+	_endTime = math.huge,
 	_loaded = false,
 	_gameState = "Loading",
 }
@@ -95,14 +96,24 @@ function GameClass:step(): boolean
 	if self._gameState == "Ended" then return true end
 	if self._gameState == "Ending" then return false end
 
-	if #self._players == 0 then
-		print("everyone died game is ending in 5 seconds")
+	-- check if end conditions have been met, and if so, start ending sequence
+	Promise.new(function(resolve, _reject)
+		if #self._players == 0 then
+			print("game has ended due to lack of players")
+			resolve(true)
+		elseif tick() >= self._endTime then
+			print("game has ended due to time")
+			resolve(true)
+		else
+			resolve(false)
+		end
+	end):andThen(function(didEnd)
+		if not didEnd then return end
 		self._gameState = "Ending"
 		Promise.delay(ENDING_PERIOD):andThen(function()
 			self._gameState = "Ended"
 		end)
-		return false
-	end
+	end)
 
 	return false
 end
@@ -128,18 +139,11 @@ function GameClass.new(initialPlayers: { Players })
 			-- start the game loop
 			print("Game Loaded")
 			self._gameState = "Starting"
-			return Promise.delay(STARTING_PERIOD)
-				:andThen(function()
-					print("Game started")
-					self._gameState = "InProgress"
-				end)
-				:andThen(function()
-					-- end the game after the gameplay period
-					return Promise.delay(GAMEPLAY_PERIOD):andThen(function()
-						print("Game ended, time is up")
-						self._gameState = "Ending"
-					end)
-				end)
+			return Promise.delay(STARTING_PERIOD):andThen(function()
+				print("Game started")
+				self._endTime = tick() + GAMEPLAY_PERIOD
+				self._gameState = "InProgress"
+			end)
 		end)
 
 	self._trove:Add(Players.PlayerRemoving:Connect(function(player: Player)
