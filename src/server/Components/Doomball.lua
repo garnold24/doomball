@@ -10,10 +10,10 @@ local Trove = require(ReplicatedStorage.Packages.Trove)
 
 local IMPULSE_TIME_STEP = 1
 local IMPULSE_PERIOD = 2
-local IMPULSE_DELTA_V = 100
+local IMPULSE_DELTA_V = 175
 
 local BALL_DAMAGE = 60
-local HIT_RATE = 1
+local HIT_RATE = 1 -- per second
 
 local Doomball = {}
 Doomball.__index = Doomball

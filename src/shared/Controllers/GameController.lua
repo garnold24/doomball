@@ -23,7 +23,6 @@ function GameController:start()
 	-- mount hud
 	local root = ReactRoblox.createRoot(Instance.new("Folder"))
 	root:render(ReactRoblox.createPortal(React.createElement(HudApp), Players.LocalPlayer.PlayerGui, "HudApp"))
-	print("hud mounted")
 end
 
 return Loader:registerSingleton(GameController)
